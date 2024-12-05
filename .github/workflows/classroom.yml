@@ -1,0 +1,152 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: DI bawah 5 tahun tanpa lembur
+      id: di-bawah-5-tahun-tanpa-lembur
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: DI bawah 5 tahun tanpa lembur
+        setup-command: javac Gaji.java
+        command: java Gaji
+        input: |-
+          4
+          0
+        expected-output: |-
+          5000000
+          3
+          1
+        comparison-method: exact
+        timeout: 10
+        max-score: 10
+    - name: Di bawah 5 tahun dengan lembur
+      id: di-bawah-5-tahun-dengan-lembur
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Di bawah 5 tahun dengan lembur
+        setup-command: javac Gaji.java
+        command: java Gaji
+        input: |-
+          4
+          5
+        expected-output: |-
+          5200000
+          3
+          1
+        comparison-method: exact
+        timeout: 10
+        max-score: 10
+    - name: Antara 5 dan 10 tanpa lembur
+      id: antara-5-dan-10-tanpa-lembur
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Antara 5 dan 10 tanpa lembur
+        setup-command: javac Gaji.java
+        command: java Gaji
+        input: |-
+          5
+          0
+        expected-output: |-
+          7500000
+          3
+          1
+        comparison-method: exact
+        timeout: 10
+        max-score: 10
+    - name: Antara 5 dan 10 dengan lembur
+      id: antara-5-dan-10-dengan-lembur
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Antara 5 dan 10 dengan lembur
+        setup-command: java Gaji.java
+        command: java Gaji
+        input: |-
+          10
+          3
+        expected-output: |-
+          7650000
+          3
+          1
+        comparison-method: exact
+        timeout: 10
+        max-score: 10
+    - name: Di atas 10 tanpa lembur
+      id: di-atas-10-tanpa-lembur
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Di atas 10 tanpa lembur
+        setup-command: javac Gaji.java
+        command: java Gaji
+        input: |-
+          11
+          0
+        expected-output: |-
+          10000000
+          3
+          1
+        comparison-method: exact
+        timeout: 10
+        max-score: 10
+    - name: Di ataas 10 tahun dengan lembur
+      id: di-ataas-10-tahun-dengan-lembur
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Di ataas 10 tahun dengan lembur
+        setup-command: javac Gaji.java
+        command: java Gaji
+        input: |-
+          12
+          4
+        expected-output: |-
+          10300000
+          3
+          1
+        comparison-method: exact
+        timeout: 10
+        max-score: 10
+    - name: Perhitungan
+      id: perhitungan
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Perhitungan
+        setup-command: javac Hitung.java
+        command: java Hitung
+        input: |-
+          5
+          Y
+          6
+          Y
+          9
+          Y
+          20
+          T
+        expected-output: |-
+          Nilai minimal : 5
+          Nilai maksimal : 20
+          Nilai rata-rata : 10.0
+        comparison-method: regex
+        timeout: 10
+        max-score: 30
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        DI-BAWAH-5-TAHUN-TANPA-LEMBUR_RESULTS: "${{steps.di-bawah-5-tahun-tanpa-lembur.outputs.result}}"
+        DI-BAWAH-5-TAHUN-DENGAN-LEMBUR_RESULTS: "${{steps.di-bawah-5-tahun-dengan-lembur.outputs.result}}"
+        ANTARA-5-DAN-10-TANPA-LEMBUR_RESULTS: "${{steps.antara-5-dan-10-tanpa-lembur.outputs.result}}"
+        ANTARA-5-DAN-10-DENGAN-LEMBUR_RESULTS: "${{steps.antara-5-dan-10-dengan-lembur.outputs.result}}"
+        DI-ATAS-10-TANPA-LEMBUR_RESULTS: "${{steps.di-atas-10-tanpa-lembur.outputs.result}}"
+        DI-ATAAS-10-TAHUN-DENGAN-LEMBUR_RESULTS: "${{steps.di-ataas-10-tahun-dengan-lembur.outputs.result}}"
+        PERHITUNGAN_RESULTS: "${{steps.perhitungan.outputs.result}}"
+      with:
+        runners: di-bawah-5-tahun-tanpa-lembur,di-bawah-5-tahun-dengan-lembur,antara-5-dan-10-tanpa-lembur,antara-5-dan-10-dengan-lembur,di-atas-10-tanpa-lembur,di-ataas-10-tahun-dengan-lembur,perhitungan
